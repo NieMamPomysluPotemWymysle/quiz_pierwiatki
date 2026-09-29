@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz z pierwiastków</title>
+
+    <style>
+        body {
+            font-family: Arial;
+        }
+        #przyciskDalej {
+            display: none;
+            margin-top: 15px;
+        }       
+    </style>
+</head>
+
+<body>
+<body>
+    <!-- 1. EKRAN STARTOWY -->
+    <div id="ekranStartowy">
+        <h1>Quiz z pierwiastków</h1>
+        <p>Sprawdź swoją wiedzę z chemii!</p>
+        <button id="przyciskStart">Start</button>
+    </div>
+
+    <!-- 2. EKRAN QUIZU (ukryty na początku w style="display: none;") -->
+    <div id="ekranQuizu" style="display: none;">
+        <p id="tekstPytania"></p>
+        <p id="punkty">Punkty: 0</p>
+        <p id="wynik"></p>
+
+        <button id="odpowiedzH">H</button>
+        <button id="odpowiedzHe">He</button>
+        <button id="odpowiedzO">O</button>
+        <br>
+        <button id="przyciskDalej">Dalej</button>
+    </div>
+
+    <!-- 3. EKRAN KOŃCOWY (również ukryty na początku) -->
+    <div id="ekranKoniec" style="display: none;">
+        <h1>Koniec gry!</h1>
+        <p id="tekstKoniec"></p>
+        <button id="przyciskZagrajZnowu">Zagraj znowu</button>
+    </div>
+
+</body>
+
+    <script>
+        let pytania = [
+            { nazwa: "Cynk", symbol: "Zn" },
+            { nazwa: "Cyna", symbol: "Sn" },
+            { nazwa: "Żelazo", symbol: "Fe" },
+            { nazwa: "Miedź", symbol: "Cu" },
+            { nazwa: "Wodór", symbol: "H" },
+            { nazwa: "Wapń", symbol: "Ca" },
+            { nazwa: "Magnez", symbol: "Mg" },
+            { nazwa: "Mangan", symbol: "Mn" },
+            { nazwa: "Złoto", symbol: "Au" },
+            { nazwa: "Srebro", symbol: "Ag" },
+            { nazwa: "Platyna", symbol: "Pt" },
+            { nazwa: "Ołów", symbol: "Pb" },
+            { nazwa: "Bor", symbol: "B" },
+            { nazwa: "Bar", symbol: "Ba" },
+            { nazwa: "Brom", symbol: "Br" },
+            { nazwa: "Lit", symbol: "Li" },
+            { nazwa: "Neon", symbol: "Ne" },
+            { nazwa: "Sód", symbol: "Na" },
+            { nazwa: "Potas", symbol: "K" },
+            { nazwa: "Nikiel", symbol: "Ni" },
+            { nazwa: "Einsteinium", symbol: "Es" },
+            { nazwa: "Tlen", symbol: "O" },
+            { nazwa: "Hel", symbol: "He" },
+            { nazwa: "Glin", symbol: "Al" },
+            { nazwa: "Rtęć", symbol: "Hg" },
+            { nazwa: "Polon", symbol: "Po" },
+            { nazwa: "Krzem", symbol: "Si" },
+            { nazwa: "Siarka", symbol: "S" },
+            { nazwa: "Fluor", symbol: "F" },
+            { nazwa: "Fosfor", symbol: "P" }
+        ];
+        
+        function losujZlySymbol(poprawny, innyWabik) {
+            let symbol = pytania[Math.floor(Math.random() * pytania.length)].symbol;
+
+            while (symbol === poprawny || symbol === innyWabik) {
+                symbol = pytania[Math.floor(Math.random() * pytania.length)].symbol;
+            }
+
+            return symbol;
+        }
+        
+     let numerPytania = 0;
+let aktualnePytanie;
+
+function pokazPytanie() {
+    document.getElementById("odpowiedzH").disabled = false;
+    document.getElementById("odpowiedzHe").disabled = false;
+    document.getElementById("odpowiedzO").disabled = false;
+    document.getElementById("przyciskDalej").style.display = "none";
+    aktualnePytanie = pytania[numerPytania];
+    let zla1 = losujZlySymbol(aktualnePytanie.symbol, "");
+    let zla2 = losujZlySymbol(aktualnePytanie.symbol, zla1);
+    let odpowiedzi = [aktualnePytanie.symbol, zla1, zla2];
+    odpowiedzi.sort(function() {
+        return Math.random() - 0.5;
+    });
+
+document.getElementById("tekstPytania").textContent = 
+    (numerPytania + 1) + ". Jaki symbol ma " + aktualnePytanie.nazwa + "?";
+
+    document.getElementById("odpowiedzH").textContent = odpowiedzi[0];
+    document.getElementById("odpowiedzHe").textContent = odpowiedzi[1];
+    document.getElementById("odpowiedzO").textContent = odpowiedzi[2];
+}
+
+
+        let punkty = 0;
+
+        function sprawdzOdpowiedz(wybranySymbol) {
+            if (aktualnePytanie.symbol === wybranySymbol) {
+                punkty = punkty + 1;
+                document.getElementById("wynik").textContent = "Dobrze!";
+                document.getElementById("wynik").style.color = "green";
+            } else {
+                document.getElementById("wynik").textContent = "Źle!";
+                document.getElementById("wynik").style.color = "red";
+            }
+
+            document.getElementById("punkty").textContent =
+                "Punkty: " + punkty;
+
+            document.getElementById("odpowiedzH").disabled = true;
+            document.getElementById("odpowiedzHe").disabled = true;
+            document.getElementById("odpowiedzO").disabled = true;
+            document.getElementById("przyciskDalej").style.display = "inline-block";
+        }
+
+            document.getElementById("odpowiedzH").onclick = function() {
+                sprawdzOdpowiedz(this.textContent);
+        };
+
+        document.getElementById("odpowiedzHe").onclick = function() {
+            sprawdzOdpowiedz(this.textContent);
+        };
+
+        document.getElementById("odpowiedzO").onclick = function() {
+            sprawdzOdpowiedz(this.textContent);
+        };
+        document.getElementById("przyciskDalej").onclick = function() {
+            numerPytania = numerPytania + 1;
+            document.getElementById("wynik").textContent = "";
+            pokazPytanie();
+        };
+        document.getElementById("odpowiedzH").onclick = function() {
+        sprawdzOdpowiedz(this.textContent);
+    };
+
+    document.getElementById("odpowiedzHe").onclick = function() {
+        sprawdzOdpowiedz(this.textContent);
+    };
+
+    document.getElementById("odpowiedzO").onclick = function() {
+        sprawdzOdpowiedz(this.textContent);
+    };
+
+    document.getElementById("przyciskDalej").onclick = function() {
+        numerPytania = numerPytania + 1;
+        document.getElementById("wynik").textContent = "";
+
+        if (numerPytania < pytania.length) {
+            pokazPytanie();
+        } else {
+            document.getElementById("ekranQuizu").style.display = "none";
+            document.getElementById("ekranKoniec").style.display = "block";
+            document.getElementById("tekstKoniec").textContent = 
+                "Zdobyłeś " + punkty + " z " + pytania.length + " punktów!";
+        }
+    };
+
+    document.getElementById("przyciskStart").onclick = function() {
+        document.getElementById("ekranStartowy").style.display = "none";
+        document.getElementById("ekranQuizu").style.display = "block";
+        pokazPytanie();
+    };
+    document.getElementById("przyciskZagrajZnowu").onclick = function() {
+    // 1. Resetujemy zmienne
+    numerPytania = 0;
+    punkty = 0;
+
+    // 2. Resetujemy widok punktów
+    document.getElementById("punkty").textContent = "Punkty: 0";
+
+    // 3. Przełączamy ekrany
+    document.getElementById("ekranKoniec").style.display = "none";
+    document.getElementById("ekranQuizu").style.display = "block";
+
+    // 4. Ładujemy pierwsze pytanie
+    pokazPytanie();
+};
+    </script>
+</body>
+</html>
