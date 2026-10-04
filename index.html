@@ -5,46 +5,138 @@
     <title>Quiz z pierwiastków</title>
 
     <style>
-        body {
-            font-family: Arial;
-        }
-        #przyciskDalej {
-            display: none;
-            margin-top: 15px;
-        }       
+/* Domyślny wygląd i środkowanie tekstu we wszystkich przyciskach */
+button {
+    display: inline-flex;
+    align-items: center;     /* Środkowanie w pionie */
+    justify-content: center; /* Środkowanie w poziomie */
+    border: 2px solid #ccc;  /* Subtelna ramka */
+    background-color: #b3d6ff; /* Błękitne tło */
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Kółka odpowiedzi (H, He, O) */
+#odpowiedzH, #odpowiedzHe, #odpowiedzO {
+    min-width: 60px;
+    height: 50px;
+    border-radius: 25px; 
+    padding: 0 15px;         
+}
+
+/* Przyciski z tekstem */
+#przyciskLatwy, #przyciskTrudny, #przyciskDalej, #przyciskDalejTrudny, #przyciskZagrajZnowu, #przyciskPowrot, #sprawdzTrudny {
+    width: auto;         
+    height: auto;        
+    padding: 10px 20px;  
+    border-radius: 20px; 
+}
+
+/* Style kolorów dla odpowiedzi */
+.dobrze {
+    background-color: #2ecc71 !important; /* Zielony po dobrej odpowiedzi */
+    color: white !important;
+    border-color: #27ae60 !important;
+}
+
+.zle {
+    background-color: #e74c3c !important; /* Czerwony po błędnej odpowiedzi */
+    color: white !important;
+    border-color: #c0392b !important;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+#przyciskDalej, #przyciskDalejTrudny {
+    display: none;
+    margin-top: 15px;
+}  
+
+#odpowiedzTekst {
+    font-size: 18px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+}
+
+#wynikTrudny {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* REGUŁA DLA TELEFONÓW */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    #ekranQuizu button {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+        padding: 15px;
+        font-size: 18px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    p {
+        font-size: 18px;
+    }
+}
     </style>
 </head>
 
-<body>
 <body>
     <!-- 1. EKRAN STARTOWY -->
     <div id="ekranStartowy">
         <h1>Quiz z pierwiastków</h1>
         <p>Sprawdź swoją wiedzę z chemii!</p>
-        <button id="przyciskStart">Start</button>
+        <button id="przyciskLatwy">tryb łatwy</button>
+        <button id="przyciskTrudny">tryb trudny</button>
     </div>
 
-    <!-- 2. EKRAN QUIZU (ukryty na początku w style="display: none;") -->
+    <!-- 2. EKRAN QUIZU (ŁATWY) -->
     <div id="ekranQuizu" style="display: none;">
         <p id="tekstPytania"></p>
         <p id="punkty">Punkty: 0</p>
         <p id="wynik"></p>
 
-        <button id="odpowiedzH">H</button>
-        <button id="odpowiedzHe">He</button>
-        <button id="odpowiedzO">O</button>
+        <button id="odpowiedzH"></button>
+        <button id="odpowiedzHe"></button>
+        <button id="odpowiedzO"></button>
         <br>
         <button id="przyciskDalej">Dalej</button>
     </div>
 
-    <!-- 3. EKRAN KOŃCOWY (również ukryty na początku) -->
+    <!-- 3. EKRAN TRUDNY -->
+    <div id="ekranTrudny" style="display: none;">
+        <p id="tekstPytaniaTrudny"></p>
+        <p id="punktyTrudny">Punkty: 0</p>
+        <p id="wynikTrudny"></p>
+        <input type="text" id="odpowiedzTekst" placeholder="Wpisz symbol...">
+        <button id="sprawdzTrudny">Sprawdź</button>
+        <br>
+        <button id="przyciskDalejTrudny">Dalej</button>
+    </div>
+
+    <!-- 4. EKRAN KOŃCOWY -->
     <div id="ekranKoniec" style="display: none;">
         <h1>Koniec gry!</h1>
         <p id="tekstKoniec"></p>
         <button id="przyciskZagrajZnowu">Zagraj znowu</button>
+        <button id="przyciskPowrot">Powrót do menu głównego</button>
     </div>
-
-</body>
 
     <script>
         let pytania = [
@@ -90,45 +182,83 @@
             return symbol;
         }
         
-     let numerPytania = 0;
-let aktualnePytanie;
-
-function pokazPytanie() {
-    document.getElementById("odpowiedzH").disabled = false;
-    document.getElementById("odpowiedzHe").disabled = false;
-    document.getElementById("odpowiedzO").disabled = false;
-    document.getElementById("przyciskDalej").style.display = "none";
-    aktualnePytanie = pytania[numerPytania];
-    let zla1 = losujZlySymbol(aktualnePytanie.symbol, "");
-    let zla2 = losujZlySymbol(aktualnePytanie.symbol, zla1);
-    let odpowiedzi = [aktualnePytanie.symbol, zla1, zla2];
-    odpowiedzi.sort(function() {
-        return Math.random() - 0.5;
-    });
-
-document.getElementById("tekstPytania").textContent = 
-    (numerPytania + 1) + ". Jaki symbol ma " + aktualnePytanie.nazwa + "?";
-
-    document.getElementById("odpowiedzH").textContent = odpowiedzi[0];
-    document.getElementById("odpowiedzHe").textContent = odpowiedzi[1];
-    document.getElementById("odpowiedzO").textContent = odpowiedzi[2];
-}
-
-
+        let numerPytania = 0;
+        let aktualnePytanie;
         let punkty = 0;
+        let ostatniTryb = "latwy"; // Zmienna do zapamiętania trybu
 
-        function sprawdzOdpowiedz(wybranySymbol) {
-            if (aktualnePytanie.symbol === wybranySymbol) {
+        function pokazPytanie() {
+            document.getElementById("odpowiedzH").classList.remove("dobrze", "zle");
+            document.getElementById("odpowiedzHe").classList.remove("dobrze", "zle");
+            document.getElementById("odpowiedzO").classList.remove("dobrze", "zle");
+            
+            document.getElementById("odpowiedzH").disabled = false;
+            document.getElementById("odpowiedzHe").disabled = false;
+            document.getElementById("odpowiedzO").disabled = false;
+            document.getElementById("przyciskDalej").style.display = "none";
+            
+            aktualnePytanie = pytania[numerPytania];
+            let zla1 = losujZlySymbol(aktualnePytanie.symbol, "");
+            let zla2 = losujZlySymbol(aktualnePytanie.symbol, zla1);
+            let odpowiedzi = [aktualnePytanie.symbol, zla1, zla2];
+            
+            odpowiedzi.sort(function() {
+                return Math.random() - 0.5;
+            });
+
+            document.getElementById("tekstPytania").textContent = 
+                (numerPytania + 1) + ". Jaki symbol ma " + aktualnePytanie.nazwa + "?";
+
+            document.getElementById("odpowiedzH").textContent = "1. " + odpowiedzi[0];
+            document.getElementById("odpowiedzHe").textContent = "2. " + odpowiedzi[1];
+            document.getElementById("odpowiedzO").textContent = "3. " + odpowiedzi[2];
+        }
+
+        function pokazPytanieTrudne() {
+            aktualnePytanie = pytania[numerPytania];
+
+            document.getElementById("tekstPytaniaTrudny").textContent = 
+                (numerPytania + 1) + ". Jaki symbol ma " + aktualnePytanie.nazwa + "?";
+
+            let poleTekstowe = document.getElementById("odpowiedzTekst");
+            poleTekstowe.value = "";
+            poleTekstowe.disabled = false;
+            
+            document.getElementById("sprawdzTrudny").disabled = false;
+            
+            let elementWynik = document.getElementById("wynikTrudny");
+            elementWynik.textContent = "";
+            elementWynik.style.color = "";
+
+            document.getElementById("przyciskDalejTrudny").style.display = "none";
+
+            poleTekstowe.focus();
+        }
+
+        function sprawdzOdpowiedz(przycisk) {
+            let przyciski = [
+                document.getElementById("odpowiedzH"),
+                document.getElementById("odpowiedzHe"),
+                document.getElementById("odpowiedzO")
+            ];
+
+            let wybraneSymbol = przycisk.textContent.split(". ")[1];
+
+            if (aktualnePytanie.symbol === wybraneSymbol) {
+                przycisk.classList.add("dobrze");
                 punkty = punkty + 1;
-                document.getElementById("wynik").textContent = "Dobrze!";
-                document.getElementById("wynik").style.color = "green";
             } else {
-                document.getElementById("wynik").textContent = "Źle!";
-                document.getElementById("wynik").style.color = "red";
+                przycisk.classList.add("zle");
+
+                for (let i = 0; i < przyciski.length; i++) {
+                    let symbolPrzycisku = przyciski[i].textContent.split(". ")[1];
+                    if (symbolPrzycisku === aktualnePytanie.symbol) {
+                        przyciski[i].classList.add("dobrze");
+                    }
+                }
             }
 
-            document.getElementById("punkty").textContent =
-                "Punkty: " + punkty;
+            document.getElementById("punkty").textContent = "Punkty: " + punkty;
 
             document.getElementById("odpowiedzH").disabled = true;
             document.getElementById("odpowiedzHe").disabled = true;
@@ -136,68 +266,146 @@ document.getElementById("tekstPytania").textContent =
             document.getElementById("przyciskDalej").style.display = "inline-block";
         }
 
-            document.getElementById("odpowiedzH").onclick = function() {
-                sprawdzOdpowiedz(this.textContent);
-        };
+        function sprawdzOdpowiedzTrudna() {
+            let wpisanyTekst = document.getElementById("odpowiedzTekst").value;
 
-        document.getElementById("odpowiedzHe").onclick = function() {
-            sprawdzOdpowiedz(this.textContent);
-        };
+            if (wpisanyTekst.trim() === "") {
+                return; 
+            }
 
-        document.getElementById("odpowiedzO").onclick = function() {
-            sprawdzOdpowiedz(this.textContent);
-        };
+            let elementWynik = document.getElementById("wynikTrudny");
+
+            if (wpisanyTekst.trim().toLowerCase() === aktualnePytanie.symbol.toLowerCase()) {
+                punkty = punkty + 1;
+                elementWynik.textContent = "Dobrze!";
+                elementWynik.style.color = "#2ecc71";
+            } else {
+                elementWynik.textContent = "Źle! Poprawny symbol to: " + aktualnePytanie.symbol;
+                elementWynik.style.color = "#e74c3c";
+            }
+
+            document.getElementById("punktyTrudny").textContent = "Punkty: " + punkty;
+            document.getElementById("odpowiedzTekst").disabled = true;
+            document.getElementById("sprawdzTrudny").disabled = true;
+            document.getElementById("przyciskDalejTrudny").style.display = "inline-block";
+        }
+
+        // Zdarzenia kliknięcia - Łatwy
+        document.getElementById("odpowiedzH").onclick = function() { sprawdzOdpowiedz(this); };
+        document.getElementById("odpowiedzHe").onclick = function() { sprawdzOdpowiedz(this); };
+        document.getElementById("odpowiedzO").onclick = function() { sprawdzOdpowiedz(this); };
+
         document.getElementById("przyciskDalej").onclick = function() {
             numerPytania = numerPytania + 1;
             document.getElementById("wynik").textContent = "";
-            pokazPytanie();
+
+            if (numerPytania < pytania.length) {
+                pokazPytanie();
+            } else {
+                zakonczGre();
+            }
         };
-        document.getElementById("odpowiedzH").onclick = function() {
-        sprawdzOdpowiedz(this.textContent);
-    };
 
-    document.getElementById("odpowiedzHe").onclick = function() {
-        sprawdzOdpowiedz(this.textContent);
-    };
+        // Zdarzenia - Trudny
+        document.getElementById("sprawdzTrudny").onclick = sprawdzOdpowiedzTrudna;
 
-    document.getElementById("odpowiedzO").onclick = function() {
-        sprawdzOdpowiedz(this.textContent);
-    };
+        document.getElementById("odpowiedzTekst").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); 
+                
+                let przyciskDalej = document.getElementById("przyciskDalejTrudny");
+                let przyciskSprawdz = document.getElementById("sprawdzTrudny");
+                let wpisanyTekst = document.getElementById("odpowiedzTekst").value;
 
-    document.getElementById("przyciskDalej").onclick = function() {
-        numerPytania = numerPytania + 1;
-        document.getElementById("wynik").textContent = "";
+                if (przyciskDalej.style.display !== "none") {
+                    przyciskDalej.click();
+                } 
+                else if (!przyciskSprawdz.disabled && wpisanyTekst.trim() !== "") {
+                    sprawdzOdpowiedzTrudna();
+                }
+            }
+        });
 
-        if (numerPytania < pytania.length) {
-            pokazPytanie();
-        } else {
+        document.getElementById("przyciskDalejTrudny").onclick = function() {
+            numerPytania = numerPytania + 1;
+
+            if (numerPytania < pytania.length) {
+                pokazPytanieTrudne();
+            } else {
+                zakonczGre();
+            }
+        };
+
+        function zakonczGre() {
             document.getElementById("ekranQuizu").style.display = "none";
+            document.getElementById("ekranTrudny").style.display = "none";
             document.getElementById("ekranKoniec").style.display = "block";
             document.getElementById("tekstKoniec").textContent = 
                 "Zdobyłeś " + punkty + " z " + pytania.length + " punktów!";
         }
-    };
 
-    document.getElementById("przyciskStart").onclick = function() {
-        document.getElementById("ekranStartowy").style.display = "none";
-        document.getElementById("ekranQuizu").style.display = "block";
-        pokazPytanie();
-    };
-    document.getElementById("przyciskZagrajZnowu").onclick = function() {
-    // 1. Resetujemy zmienne
-    numerPytania = 0;
-    punkty = 0;
+        // Wybór trybu (Łatwy / Trudny)
+        let włączUruchomienie = function() {
+            ostatniTryb = "latwy"; // Zapamiętanie wyboru
+            numerPytania = 0;
+            punkty = 0;
+            document.getElementById("punkty").textContent = "Punkty: 0";
+            document.getElementById("ekranStartowy").style.display = "none";
+            document.getElementById("ekranQuizu").style.display = "block";
+            pytania.sort(function() { return Math.random() - 0.5; });
+            pokazPytanie();
+        };
 
-    // 2. Resetujemy widok punktów
-    document.getElementById("punkty").textContent = "Punkty: 0";
+        let włączUruchomienieTrudne = function() {
+            ostatniTryb = "trudny"; // Zapamiętanie wyboru
+            numerPytania = 0;
+            punkty = 0;
+            document.getElementById("punktyTrudny").textContent = "Punkty: 0";
+            document.getElementById("ekranStartowy").style.display = "none";
+            document.getElementById("ekranTrudny").style.display = "block";
+            pytania.sort(function() { return Math.random() - 0.5; });
+            pokazPytanieTrudne();
+        };
 
-    // 3. Przełączamy ekrany
-    document.getElementById("ekranKoniec").style.display = "none";
-    document.getElementById("ekranQuizu").style.display = "block";
+        document.getElementById("przyciskLatwy").onclick = włączUruchomienie;
+        document.getElementById("przyciskTrudny").onclick = włączUruchomienieTrudne;
 
-    // 4. Ładujemy pierwsze pytanie
-    pokazPytanie();
-};
+        // Restart w poprzednio wybranym trybie
+        document.getElementById("przyciskZagrajZnowu").onclick = function() {
+            document.getElementById("ekranKoniec").style.display = "none";
+            if (ostatniTryb === "trudny") {
+                włączUruchomienieTrudne();
+            } else {
+                włączUruchomienie();
+            }
+        };
+
+        document.getElementById("przyciskPowrot").onclick = function() {
+            document.getElementById("ekranKoniec").style.display = "none";
+            document.getElementById("ekranStartowy").style.display = "block";
+        };
+
+        // OBSŁUGA KLAWIATURY DLA TRYBU ŁATWEGO
+        document.addEventListener("keydown", function(event) {
+            let ekranQuizu = document.getElementById("ekranQuizu");
+
+            if (ekranQuizu.style.display !== "none") {
+                let przycisk1 = document.getElementById("odpowiedzH");
+                let przycisk2 = document.getElementById("odpowiedzHe");
+                let przycisk3 = document.getElementById("odpowiedzO");
+                let przyciskDalej = document.getElementById("przyciskDalej");
+
+                if (event.key === "1" && !przycisk1.disabled) {
+                    sprawdzOdpowiedz(przycisk1);
+                } else if (event.key === "2" && !przycisk2.disabled) {
+                    sprawdzOdpowiedz(przycisk2);
+                } else if (event.key === "3" && !przycisk3.disabled) {
+                    sprawdzOdpowiedz(przycisk3);
+                } else if (event.key === "Enter" && przyciskDalej.style.display !== "none") {
+                    przyciskDalej.click();
+                }
+            }
+        });
     </script>
 </body>
 </html>
